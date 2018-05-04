@@ -233,6 +233,11 @@ class MakefileToolchain
 		compiler.files_to_copy.add "{clib}/gc_chooser.c"
 		compiler.files_to_copy.add "{clib}/gc_chooser.h"
 
+		var traces = new ExternCFile("traces.c", "-llttng-ust -ldl")
+		compiler.extern_bodies.add(traces)
+		compiler.files_to_copy.add "{clib}/traces.c"
+		compiler.files_to_copy.add "{clib}/traces.h"
+
 		# FFI
 		for m in compiler.mainmodule.in_importation.greaters do
 			compiler.finalize_ffi_for_module(m)
@@ -374,6 +379,7 @@ CFLAGS ?= -g {{{if not debug then "-O2" else ""}}} -Wno-unused-value -Wno-switch
 CINCL =
 LDFLAGS ?=
 LDLIBS  ?= -lm {{{linker_options.join(" ")}}}
+LDLIBS += -llttng-ust -ldl
 \n"""
 
 		makefile.write "\n# SPECIAL CONFIGURATION FLAGS\n"
@@ -698,6 +704,7 @@ abstract class AbstractCompiler
 		self.header.add_decl("#include <string.h>")
 		# longjmp !
 		self.header.add_decl("#include <setjmp.h>\n")
+		self.header.add_decl("#include \"traces.h\"")
 		self.header.add_decl("#include <sys/types.h>\n")
 		self.header.add_decl("#include <unistd.h>\n")
 		self.header.add_decl("#include <stdint.h>\n")
