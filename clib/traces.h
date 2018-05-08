@@ -22,6 +22,23 @@ TRACEPOINT_EVENT(
     )
 )
 
+
+TRACEPOINT_EVENT(
+    Nit_Compiler,
+    Object_Destruction,
+    TP_ARGS(
+        char*, object_class_arg,
+        int, object_id_arg
+    ),
+    TP_FIELDS(
+        ctf_string(object_class, object_class_arg)
+        ctf_integer(int, object_id, object_id_arg)
+    )
+)
+
+
 #endif /* _HELLO_TP_H */
 
 #include <lttng/tracepoint-event.h>
+
+void trace(void *obj, void *cd);

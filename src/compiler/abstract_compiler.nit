@@ -705,6 +705,7 @@ abstract class AbstractCompiler
 		# longjmp !
 		self.header.add_decl("#include <setjmp.h>\n")
 		self.header.add_decl("#include \"traces.h\"")
+		self.header.add_decl("#include <gc.h>\n")
 		self.header.add_decl("#include <sys/types.h>\n")
 		self.header.add_decl("#include <unistd.h>\n")
 		self.header.add_decl("#include <stdint.h>\n")
