@@ -4,8 +4,8 @@
 #undef TRACEPOINT_INCLUDE
 #define TRACEPOINT_INCLUDE "/home/olivier/Bureau/nit/src/nit_compile/traces.h"
 
-#if !defined(_HELLO_TP_H) || defined(TRACEPOINT_HEADER_MULTI_READ)
-#define _HELLO_TP_H
+#if !defined(_TRACES_H) || defined(TRACEPOINT_HEADER_MULTI_READ)
+#define _TRACES_H
 
 #include <lttng/tracepoint.h>
 
@@ -22,6 +22,6 @@ TRACEPOINT_EVENT(
     )
 )
 
-#endif /* _HELLO_TP_H */
+#endif
 
 #include <lttng/tracepoint-event.h>
