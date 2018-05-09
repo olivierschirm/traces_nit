@@ -75,6 +75,8 @@ redef class ToolContext
 	var opt_release = new OptionBool("Compile in release mode and finalize application", "--release")
 	# -g
 	var opt_debug = new OptionBool("Compile in debug mode (no C-side optimization)", "-g", "--debug")
+	# -t
+	var opt_trace = new OptionBool("Compile with lttng's instrumentation", "-t", "--trace")
 
 	redef init
 	do
@@ -87,6 +89,7 @@ redef class ToolContext
 		self.option_context.add_option(self.opt_release)
 		self.option_context.add_option(self.opt_max_c_lines, self.opt_group_c_files)
 		self.option_context.add_option(self.opt_debug)
+		self.option_context.add_option(self.opt_trace)
 
 		opt_no_main.hidden = true
 	end
@@ -232,6 +235,15 @@ class MakefileToolchain
 		var clib = toolcontext.nit_dir / "clib"
 		compiler.files_to_copy.add "{clib}/gc_chooser.c"
 		compiler.files_to_copy.add "{clib}/gc_chooser.h"
+
+		# Add lttng traces provider to external bodies
+		if toolcontext.opt_trace.value then
+			var traces = new ExternCFile("traces.c", "-llttng-ust -ldl")
+			traces.pkgconfigs.add "lttng-ust"
+			compiler.extern_bodies.add(traces)
+			compiler.files_to_copy.add "{clib}/traces.c"
+			compiler.files_to_copy.add "{clib}/traces.h"
+		end 
 
 		# FFI
 		for m in compiler.mainmodule.in_importation.greaters do
@@ -706,6 +718,7 @@ abstract class AbstractCompiler
 		self.header.add_decl("#endif")
 		self.header.add_decl("#include <inttypes.h>\n")
 		self.header.add_decl("#include \"gc_chooser.h\"")
+		if modelbuilder.toolcontext.opt_trace.value then self.header.add_decl("#include \"traces.h\"")
 		self.header.add_decl("#ifdef __APPLE__")
 		self.header.add_decl("	#include <TargetConditionals.h>")
 		self.header.add_decl("	#include <syslog.h>")
